@@ -9,6 +9,7 @@ import './styles/global.scss';
 
 import './styles/sidebar.scss';
 import './styles/content.scss';
+import { useCallback } from 'react';
 
 interface GenreResponseProps {
   id: number;
@@ -41,7 +42,7 @@ export function App() {
     });
   }, []);
 
-  useEffect(() => {
+  const loadData = useCallback(() => {
     api.get<MovieProps[]>(`movies/?Genre_id=${selectedGenreId}`).then(response => {
       setMovies(response.data);
     });
@@ -49,11 +50,15 @@ export function App() {
     api.get<GenreResponseProps>(`genres/${selectedGenreId}`).then(response => {
       setSelectedGenre(response.data);
     })
+  }, [selectedGenreId])
+
+  useEffect(() => {
+    loadData()
   }, [selectedGenreId]);
 
-  function handleClickButton(id: number) {
+  const handleClickButton = useCallback((id: number) => {
     setSelectedGenreId(id);
-  }
+  }, [])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
